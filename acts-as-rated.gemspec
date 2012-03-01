@@ -18,4 +18,5 @@ Gem::Specification.new do |s|
     "README"
     ]
   s.test_files = ["test/rated_test.rb"]
+  s.require_paths = ["lib"]
 end
