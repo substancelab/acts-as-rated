@@ -113,13 +113,14 @@ module ActiveRecord #:nodoc:
           end
 
           raise RatedError, ":rating_range must be a range object" unless options[:rating_range].nil? || (Range === options[:rating_range])
-          write_inheritable_attribute( :acts_as_rated_options ,
-                                         { :rating_range => options[:rating_range],
-                                           :rating_class => rating_class,
-                                           :stats_class => stats_class,
-                                           :rater_class => rater_class } )
-          class_attribute :acts_as_rated_options
 
+          # Fix Rails 3 deprecation warning          
+          class_attribute :acts_as_rated_options, :instance_writer => false
+          self.acts_as_rated_options = {:rating_range => options[:rating_range],
+                                        :rating_class => rating_class,
+                                        :stats_class => stats_class,
+                                        :rater_class => rater_class }
+         
           class_eval do
             has_many :ratings, :as => :rated, :dependent => :delete_all, :class_name => rating_class.to_s
             has_many(:raters, :through => :ratings, :class_name => rater_class.to_s) unless options[:no_rater]
@@ -213,14 +214,14 @@ module ActiveRecord #:nodoc:
               if target
                 target.rating_count = (target.rating_count || 0) + 1
                 target.rating_total = (target.rating_total || 0) + value
-                target.rating_avg = target.rating_total.to_f / target.rating_count
+                target.rating_avg = target.rating_total.to_f / target.rating_count if attributes.has_key? 'rating_avg'
               end
               ratings << rate
             else
               rate = r
               if target
                 target.rating_total += value - rate.rating # Update the total rating with the new one
-                target.rating_avg = target.rating_total.to_f / target.rating_count
+                target.rating_avg = target.rating_total.to_f / target.rating_count if attributes.has_key? 'rating_avg'
               end
             end
 
@@ -252,8 +253,10 @@ module ActiveRecord #:nodoc:
               rating_class.transaction do
                 target.rating_count -= 1
                 target.rating_total -= r.rating
-                target.rating_avg = target.rating_total.to_f / target.rating_count
-                target.rating_avg = 0 if target.rating_avg.nan?
+                if attributes.has_key? 'rating_avg'
+                  target.rating_avg = target.rating_total.to_f / target.rating_count
+                  target.rating_avg = 0 if target.rating_avg.nan?
+                end
               end
             end
 
@@ -280,7 +283,7 @@ module ActiveRecord #:nodoc:
           if attributes.has_key? 'rating_total'
             self.rating_count ||= 0
             self.rating_total ||= 0
-            self.rating_avg   ||= 0
+            self.rating_avg   ||= 0 if attributes.has_key? 'rating_avg'
           end
         end
 
