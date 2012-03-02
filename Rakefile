@@ -1,6 +1,11 @@
+#!/usr/bin/env rake
+
+require 'bundler'
+
+Bundler::GemHelper.install_tasks
+
 require 'rubygems'
 
-Gem::manage_gems
 
 require 'rake/rdoctask'
 require 'rake/packagetask'

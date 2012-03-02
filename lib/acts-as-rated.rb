@@ -1,0 +1,1 @@
+require "acts-as-rated/acts_as_rated"
