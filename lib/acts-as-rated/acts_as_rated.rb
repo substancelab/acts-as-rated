@@ -277,6 +277,17 @@ module ActiveRecord #:nodoc:
           ratings.count(:conditions => ['rater_id = ?', rater.id]) > 0
         end
 
+        # Return ratings of the item by the given rater
+        def rated_by rater
+          rating_class = acts_as_rated_options[:rating_class].constantize
+          if !(acts_as_rated_options[:rater_class].constantize === rater)
+             raise RateError, "The rater object must be the one used when defining acts_as_rated (or a descendent of it). other objects are not acceptable"
+          end
+          raise RateError, "Rater must be a valid and existing object" if rater.nil? || rater.id.nil?
+          raise RateError, 'Rater must be a valid rater' if !rating_class.column_names.include? "rater_id"
+          ratings.where(:rater_id => rater.id)
+        end
+        
         private
 
         def init_rating_fields #:nodoc:
