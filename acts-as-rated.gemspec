@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["guy.naor@famundo.com"]
   gem.description   = %q{Flexible, configurable, and easy to use with the defaults. Supports 3 different ways to manage rating statistics.}
   gem.summary       = %q{Rails plugin rating system for ActiveRecord models.}
-  gem.homepage      = 'git://github.com/jasherai/acts-as-rated'
+  gem.homepage      = 'https://github.com/jasherai/acts-as-rated'
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.files         = `git ls-files`.split("\n")
