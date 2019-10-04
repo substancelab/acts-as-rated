@@ -274,7 +274,7 @@ module ActiveRecord #:nodoc:
           end
           raise RateError, "Rater must be a valid and existing object" if rater.nil? || rater.id.nil?
           raise RateError, 'Rater must be a valid rater' if !rating_class.column_names.include? "rater_id"
-          ratings.count(:conditions => ['rater_id = ?', rater.id]) > 0
+          ratings.where(:rater_id => rater.id).count > 0
         end
 
         # Return ratings of the item by the given rater
