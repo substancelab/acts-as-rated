@@ -197,7 +197,7 @@ module ActiveRecord #:nodoc:
             raise RateError, "the rater object must be the one used when defining acts_as_rated (or a descendent of it). other objects are not acceptable"
           end
           raise RateError, "rating with rater must receive a rater as parameter" if with_rater && (rater.nil? || rater.id.nil?)
-          r = with_rater ? ratings.find(:first, :conditions => ['rater_id = ?', rater.id]) : nil
+          r = with_rater ? ratings.where(:rater_id => rater.id).first : nil
           raise RateError, "value is out of range!" unless acts_as_rated_options[:rating_range].nil? || acts_as_rated_options[:rating_range] === value
 
           # Find the place to store the rating statistics if any...
